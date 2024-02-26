@@ -29,5 +29,5 @@ const compilerSlice  = createSlice({
     },
 
 })
-export const {updateCurrentLanguage} = compilerSlice.actions;
 export default compilerSlice.reducer;
+export const {updateCurrentLanguage} = compilerSlice.actions;
