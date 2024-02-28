@@ -19,6 +19,22 @@ import { RootState } from '@/redux/store'
 const CodeHelper = () => {
     const dispatch = useDispatch();
     const currentLanguage = useSelector((state:RootState)=>state.compilerSlice.currentLanguage);
+
+
+
+    /* Handle Save Code */
+
+    const handleSaveCode = async()=>{
+        try{
+
+        }
+        catch(err){
+            
+        }
+    }
+
+
+
     return (
         <div className='helper_header h-[50px] bg-black text-teal-50 p-2 flex justify-between items-center '>
             <div className='btn-container flex'>

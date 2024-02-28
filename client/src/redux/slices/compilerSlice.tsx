@@ -16,9 +16,38 @@ export interface CompilerSliceInitialStateType {
 
 const initialState: CompilerSliceInitialStateType = {
     fullCode: {
-        html: "this is html code",
-        css: "this is css code",
-        javascript: "this is js code",
+        html: `<html lang="en">
+        <body>
+             <h1>Hello, World!</h1>
+             <p>Deepak Kumar</p>
+             <button id="clickMe">Click Me!</button>
+             <script src="script.js"></script>
+           
+         </body>
+</html>`,
+        css:`body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        }
+      h1 {
+          color: #333;
+          }
+      button {
+               padding: 10px 20px;
+               background-color: #007bff;
+               color: #fff;
+               border: none;
+               border-radius: 5px;
+               cursor: pointer;
+              }
+      button:hover {
+                  background-color: #0056b3;
+        }
+          `,
+        javascript: `document.getElementById('clickMe').addEventListener('click', function() {
+            alert('Button clicked!');
+          });
+          `,
     },
 
     currentLanguage: "html",
