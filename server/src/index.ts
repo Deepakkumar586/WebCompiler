@@ -11,7 +11,7 @@ config();
 
 
 // Routess
-app.use("/compiler",compilerRouter);
+app.use("/compiler", compilerRouter);
 
 app.get("/", (req: Request, res: Response) => {
     return res.status(200).send("Server is running");
