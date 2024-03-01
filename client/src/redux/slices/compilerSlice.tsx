@@ -1,8 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-
-
-
 // interface ak object hai jo btata hai initialState ka Type iska use typeScript me Karte hai
 export interface CompilerSliceInitialStateType {
     fullCode: {
@@ -11,7 +8,7 @@ export interface CompilerSliceInitialStateType {
         javascript: string
     };
     currentLanguage: "html" | "css" | "javascript";
-    
+
 }
 
 const initialState: CompilerSliceInitialStateType = {
@@ -25,7 +22,7 @@ const initialState: CompilerSliceInitialStateType = {
            
          </body>
 </html>`,
-        css:`body {
+        css: `body {
         font-family: Arial, sans-serif;
         background-color: #f0f0f0;
         }
@@ -51,7 +48,7 @@ const initialState: CompilerSliceInitialStateType = {
     },
 
     currentLanguage: "html",
-    
+
 }
 
 const compilerSlice = createSlice({
@@ -63,16 +60,16 @@ const compilerSlice = createSlice({
 
             state.currentLanguage = action.payload;
         },
-        updateCodeValue : (state,action:PayloadAction<string>)=>{
+        updateCodeValue: (state, action: PayloadAction<string>) => {
             state.fullCode[state.currentLanguage] = action.payload;
         },
-        updateFullCode:(state,action:PayloadAction<CompilerSliceInitialStateType["fullCode"]>)=>{
-                state.fullCode= action.payload;
+        updateFullCode: (state, action: PayloadAction<CompilerSliceInitialStateType["fullCode"]>) => {
+            state.fullCode = action.payload;
         }
-        
-        
+
+
     },
 
 })
 export default compilerSlice.reducer;
-export const { updateCurrentLanguage,updateCodeValue,updateFullCode} = compilerSlice.actions;
+export const { updateCurrentLanguage, updateCodeValue, updateFullCode } = compilerSlice.actions;

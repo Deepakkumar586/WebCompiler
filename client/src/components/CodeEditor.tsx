@@ -8,9 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { updateCodeValue } from "@/redux/slices/compilerSlice";
 
-
-
-
 // loadLanguage('tsx');
 // langs.tsx();
 const CodeEditor = () => {

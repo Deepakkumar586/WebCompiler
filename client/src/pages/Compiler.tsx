@@ -8,52 +8,54 @@ import axios from "axios"
 import { handleError } from "@/utils/handleError"
 import { useDispatch } from "react-redux"
 import { updateFullCode } from "@/redux/slices/compilerSlice"
+import { toast } from "sonner"
 // import { RootState } from "@/redux/store"
 // import { useSelector } from "react-redux"
 
 
 export const Compiler = () => {
   // const html = useSelector((state:RootState)=>state.compilerSlice.html);
-  const {urlId} = useParams();
-  console.log("URL ID",urlId);
+  const { urlId } = useParams();
+  console.log("URL ID", urlId);
 
 
   const dispatch = useDispatch();
-
-
-
-  const loadCode = async()=>{
-
-    try{
-      const res = await axios.post("http://localhost:2000/compiler/load",{
-        urlId:urlId
+  const loadCode = async () => {
+    try {
+      const res = await axios.post("http://localhost:2000/compiler/load", {
+        urlId: urlId
       });
-      console.log("LOAD CODE ",res.data);
+      console.log("LOAD CODE ", res.data);
 
       dispatch(updateFullCode(res.data.fullCode))
     }
-    catch(err){
-      console.log("CLIENT LOAD ERROR",err)
+    catch (err) {
+      console.log("CLIENT LOAD ERROR", err)
+      if (axios.isAxiosError(err)) {
+        if (err?.response?.status === 500) {
+          toast("Invalid URl, Default Code Loaded")
+        }
+      }
       handleError(err);
     }
   }
 
-  useEffect(()=>{
-    if(urlId){
+  useEffect(() => {
+    if (urlId) {
       loadCode();
     }
-  },[urlId])
+  }, [urlId])
 
   return (
     <ResizablePanelGroup
       direction="horizontal">
       <ResizablePanel defaultSize={50} className="h-[calc(100dvh-60px)] min-w-[350px]">
-        <CodeHelper/>
-        <CodeEditor/>
+        <CodeHelper />
+        <CodeEditor />
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel defaultSize={50} className="h-[calc(100dvh-60px)] min-w-[350px]">
-        <RenderCode/>
+        <RenderCode />
       </ResizablePanel>
     </ResizablePanelGroup>
   )

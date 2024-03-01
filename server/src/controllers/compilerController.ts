@@ -22,21 +22,21 @@ export const saveCode = async (req: Request, res: Response) => {
     }
 }
 export const loadCode = async (req: Request, res: Response) => {
-        const {urlId} = req.body;
+    const { urlId } = req.body;
     try {
         const existCode = await Code.findById(urlId);
 
-        if(!existCode){
+        if (!existCode) {
             return res.status(404).json({
-                success:false,
-                message:"Code not Found"
+                success: false,
+                message: "Code not Found"
             })
         }
 
         return res.status(201).json({
-            success:true,
-            message:"get existing code",
-            fullCode:existCode.fullCode
+            success: true,
+            message: "get existing code",
+            fullCode: existCode.fullCode
         })
 
     }
