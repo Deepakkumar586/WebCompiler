@@ -3,7 +3,7 @@ import compilerSlice from "./slices/compilerSlice";
 
 export const store = configureStore({
     reducer:{
-      compilerSlice:compilerSlice,
+      compilerSlice,
 
     }
 })
