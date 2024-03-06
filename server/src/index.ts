@@ -4,6 +4,7 @@ import cors from "cors"
 import { config } from 'dotenv';
 import { dbConnect } from './lib/dbConnect';
 import { compilerRouter } from './routes/compilerRoutes';
+import { userRouter } from './routes/userRouter';
 
 app.use(express.json());
 app.use(cors());
@@ -12,6 +13,7 @@ config();
 
 // Routess
 app.use("/compiler", compilerRouter);
+app.use("/auth", userRouter);
 
 app.get("/", (req: Request, res: Response) => {
     return res.status(200).send("Server is running");

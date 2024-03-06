@@ -12,6 +12,12 @@ const Header = () => {
                 <li>
                     <Link to="/compiler"><Button variant="ghost">Compiler</Button></Link>
                 </li>
+                <li>
+                    <Link to="/login"><Button variant="green">Login</Button></Link>
+                </li>
+                <li>
+                    <Link to="/signup"><Button variant="green">Signup</Button></Link>
+                </li>
             </ul>
         </nav>
     )
