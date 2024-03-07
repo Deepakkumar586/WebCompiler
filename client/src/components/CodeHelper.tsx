@@ -16,41 +16,43 @@ import { CompilerSliceInitialStateType, updateCurrentLanguage } from '@/redux/sl
 import { RootState } from '@/redux/store'
 import { handleError } from '@/utils/handleError'
 
-import axios from 'axios';
+// import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { toast } from 'sonner'
+import { useSaveCodeMutation } from '@/redux/slices/api'
 
 
 
 
 const CodeHelper = () => {
     const [shareBtn, setShareBtn] = useState<boolean>(false);
-    const [saveLoading, setSaveLoading] = useState<boolean>(false);
+    // const [saveLoading, setSaveLoading] = useState<boolean>(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const currentLanguage = useSelector((state: RootState) => state.compilerSlice.currentLanguage);
     const fullCode = useSelector((state: RootState) => state.compilerSlice.fullCode);
-    
+
+
+    // come data from RTK QUERY
+    const [saveCode, { isLoading }] = useSaveCodeMutation();
+
     /* Handle Save Code */
     const handleSaveCode = async () => {
-        setSaveLoading(true);
-        try {
-            const response = await axios.post("http://localhost:2000/compiler/save", {
-                fullCode: fullCode,
-            });
 
-            console.log("SAVE ON CLIENT ", response.data);
-            navigate(`/compiler/${response.data.url}`, { replace: true })
+        try {
+            const response = await saveCode(fullCode).unwrap();
+            console.log(response);
+
+            // console.log("SAVE ON CLIENT ", response.data);
+            navigate(`/compiler/${response.url}`, { replace: true })
         }
         catch (err) {
             console.log("ERROR in save code", err);
             handleError(err);
         }
-        finally {
-            setSaveLoading(false);
-        }
+
     }
 
 
@@ -73,8 +75,8 @@ const CodeHelper = () => {
                 <Button
                     onClick={handleSaveCode}
                     variant="green"
-                    disabled={saveLoading} className='text-sm  font-medium gap-1'>
-                    {saveLoading ? (<><Loader className='animate-spin' />Saving</>) : (<><Download size={16} />Save</>)}
+                    disabled={isLoading} className='text-sm  font-medium gap-1'>
+                    {isLoading ? (<><Loader className='animate-spin' />Saving</>) : (<><Download size={16} />Save</>)}
                 </Button>
 
                 {

@@ -15,6 +15,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Link } from "react-router-dom"
 
 const formSchema = z.object({
     userId: z.string(),
@@ -26,8 +27,8 @@ const Login = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            userId: "Deepak Kumar",
-            password: "deep",
+            userId: "",
+            password: "",
         },
     })
 
@@ -71,16 +72,17 @@ const Login = () => {
                                 <FormItem>
                                     <FormLabel className="text-white font-mono font-bold text-xl">UserPassword</FormLabel>
                                     <FormControl >
-                                        <Input placeholder="password " {...field} className="text-white font-mono font-bold" />
+                                        <Input type="password" placeholder="password " {...field} className="text-white font-mono font-bold" />
                                     </FormControl>
 
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <Button className="bg-gray-600 text-white hover:text-black" type="submit">Submit</Button>
+                        <Button className="bg-green-700 text-white hover:text-black" type="submit">Login</Button>
                     </form>
                 </Form>
+                <small className="text-white text-xl font-mono font-thin">Don't have an account? <Link className="text-blue-500" to='/signup'>Signup</Link></small>
             </div>
         </div>
     )

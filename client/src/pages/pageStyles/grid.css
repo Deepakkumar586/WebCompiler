@@ -65,6 +65,7 @@
   animation: textclip 2s linear infinite;
   display: inline-block;
       font-size: 80px;
+      font-weight: 500;
 }
 
 @keyframes textclip {

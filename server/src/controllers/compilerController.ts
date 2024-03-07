@@ -1,17 +1,24 @@
 import { Request, Response } from "express";
 import { Code } from "../models/Code";
+import { fullCodeType } from "../types/compilerTypes";
 
 export const saveCode = async (req: Request, res: Response) => {
-    const { fullCode } = req.body;
+    const fullCode: fullCodeType = req.body;
+    if (!fullCode.html && !fullCode.css && !fullCode.javascript) {
+        return res.status(400).send({
+            message: "Code cannot be Empty/blank"
+        })
+    }
     try {
         const newCode = await Code.create({
             fullCode: fullCode
         })
-        return res.status(201).json({
+        return res.status(201).send({
             success: true,
             message: "Create Code Successfully",
             newCode,
             url: newCode._id,
+            status: "saved!"
         })
     }
     catch (err) {
@@ -36,7 +43,8 @@ export const loadCode = async (req: Request, res: Response) => {
         return res.status(201).json({
             success: true,
             message: "get existing code",
-            fullCode: existCode.fullCode
+            fullCode: existCode.fullCode,
+            urlId
         })
 
     }
