@@ -4,7 +4,8 @@ import { CompilerSliceInitialStateType } from './compilerSlice'
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:2000"
+        baseUrl: "http://localhost:2000",
+        credentials: "include",
     }),
     endpoints: (builder) => ({
 
@@ -29,8 +30,26 @@ export const api = createApi({
                 method: "POST",
                 body: urlId,
             })
+        }),
+
+
+
+        // check-vite-env.d.ts file----no need for import
+        login: builder.mutation<userInfoType, loginCredentialsType>({
+            query: (body) => ({
+                url: "/auth/login",
+                method: "POST",
+                body: body,
+                credentials: "include",
+            })
+        }),
+        logout: builder.mutation<void, void>({
+            query: () => ({
+                url: "/auth/logout",
+                method: "POST",
+            })
         })
     })
 })
 
-export const { useSaveCodeMutation,useLoadCodeMutation } = api
+export const { useSaveCodeMutation, useLoadCodeMutation, useLoginMutation, useLogoutMutation } = api

@@ -15,7 +15,11 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useLoginMutation } from "@/redux/slices/api"
+import { handleError } from "@/utils/handleError"
+import { useDispatch } from "react-redux"
+import { updateCurrentUser, updateIsLoggedIn } from "@/redux/slices/appSlice"
 
 const formSchema = z.object({
     userId: z.string(),
@@ -23,7 +27,9 @@ const formSchema = z.object({
 })
 
 const Login = () => {
-
+    const [login, { isLoading }] = useLoginMutation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -33,10 +39,20 @@ const Login = () => {
     })
 
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
 
+        try {
 
-        console.log(values)
+            const res = await login(values).unwrap();
+            console.log(res);
+            dispatch(updateCurrentUser(res));
+            dispatch(updateIsLoggedIn(true));
+            navigate("/");
+        }
+        catch (err) {
+            console.log("Login Error : ", err);
+            handleError(err);
+        }
     }
     return (
         <div className="__login grid-bg w-full h-[calc(100dvh-60px)] text-black flex justify-center flex-col items-center gap-3">
@@ -58,7 +74,7 @@ const Login = () => {
                                 <FormItem>
                                     <FormLabel className="text-white font-mono font-bold text-xl">Username</FormLabel>
                                     <FormControl >
-                                        <Input placeholder="username or email " {...field} className="text-white font-mono font-bold" />
+                                        <Input disabled={isLoading} required placeholder="username or email " {...field} className="text-white font-mono font-bold" />
                                     </FormControl>
 
                                     <FormMessage />
@@ -72,14 +88,15 @@ const Login = () => {
                                 <FormItem>
                                     <FormLabel className="text-white font-mono font-bold text-xl">UserPassword</FormLabel>
                                     <FormControl >
-                                        <Input type="password" placeholder="password " {...field} className="text-white font-mono font-bold" />
+                                        <Input disabled={isLoading} 
+                                        type="password" required   placeholder="password " {...field} className="text-white font-mono font-bold" />
                                     </FormControl>
 
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <Button className="bg-green-700 text-white hover:text-black" type="submit">Login</Button>
+                        <Button loading={isLoading} className="bg-green-700 text-white hover:text-black" type="submit">Login</Button>
                     </form>
                 </Form>
                 <small className="text-white text-xl font-mono font-thin">Don't have an account? <Link className="text-blue-500" to='/signup'>Signup</Link></small>
