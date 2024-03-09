@@ -15,3 +15,10 @@ interface loginCredentialsType{
     userId:string;
     password:string;
 }
+
+// signup credentials
+interface signupCredentialsType{
+    username:string
+    email:string
+    password:string
+}

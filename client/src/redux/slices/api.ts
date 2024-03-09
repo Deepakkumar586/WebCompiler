@@ -43,13 +43,29 @@ export const api = createApi({
                 credentials: "include",
             })
         }),
+        signup: builder.mutation<userInfoType, signupCredentialsType>({
+            query: (body) => ({
+                url: "/auth/signup",
+                method: "POST",
+                body: body
+            })
+        }),
+
         logout: builder.mutation<void, void>({
             query: () => ({
                 url: "/auth/logout",
                 method: "POST",
-            })
+            }),
+        }),
+        getUserDetails: builder.query<userInfoType, void>({
+            query: () => ({ url: "/auth/user-details", cache: "no-store" }),
         })
-    })
+    }),
+
+
 })
 
-export const { useSaveCodeMutation, useLoadCodeMutation, useLoginMutation, useLogoutMutation } = api
+export const { useSaveCodeMutation, useLoadCodeMutation, useLoginMutation, useLogoutMutation, useGetUserDetailsQuery,useSignupMutation } = api
+
+// mutation wale array destructuring karte hai
+// query wale object destructuring

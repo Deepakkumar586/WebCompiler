@@ -5,10 +5,12 @@ import { config } from 'dotenv';
 import { dbConnect } from './lib/dbConnect';
 import { compilerRouter } from './routes/compilerRoutes';
 import { userRouter } from './routes/userRouter';
+import cookieParser from 'cookie-parser';
 
 app.use(express.json());
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 config();
+app.use(cookieParser());
 
 
 // Routess

@@ -15,7 +15,11 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { handleError } from "@/utils/handleError"
+import { useSignupMutation } from "@/redux/slices/api"
+import { useDispatch } from "react-redux"
+import { updateCurrentUser, updateIsLoggedIn } from "@/redux/slices/appSlice"
 
 const formSchema = z.object({
     username: z.string(),
@@ -24,6 +28,9 @@ const formSchema = z.object({
 })
 
 const Signup = () => {
+    const [signup,{isLoading}] = useSignupMutation();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -34,8 +41,18 @@ const Signup = () => {
     })
 
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+            try{
+                const res = await signup(values).unwrap();
+                console.log(res);
+                dispatch(updateCurrentUser(res));
+                // dispatch(updateIsLoggedIn(true));
+                navigate('/login')
+            }
+            catch(error){
+                console.log("Signup CLient Side",error)
+                handleError(error);
+            }
 
         console.log(values)
     }
@@ -57,9 +74,9 @@ const Signup = () => {
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-white font-mono font-bold text-xl">Username</FormLabel>
+                                    <FormLabel className="text-white font-mono font-bold text-xl">UserName</FormLabel>
                                     <FormControl >
-                                        <Input type="text" placeholder="username " {...field} className="text-white font-mono font-bold" />
+                                        <Input disabled={isLoading} type="text" placeholder="username " {...field} className="text-white font-mono font-bold" />
                                     </FormControl>
 
                                     <FormMessage />
@@ -71,9 +88,9 @@ const Signup = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-white font-mono font-bold text-xl">UserPassword</FormLabel>
+                                    <FormLabel className="text-white font-mono font-bold text-xl">UserEmail</FormLabel>
                                     <FormControl >
-                                        <Input type="email" placeholder="email " {...field} className="text-white font-mono font-bold" />
+                                        <Input disabled={isLoading} type="email" placeholder="email " {...field} className="text-white font-mono font-bold" />
                                     </FormControl>
 
                                     <FormMessage />
@@ -87,14 +104,14 @@ const Signup = () => {
                                 <FormItem>
                                     <FormLabel className="text-white font-mono font-bold text-xl">UserPassword</FormLabel>
                                     <FormControl >
-                                        <Input type="password"  placeholder="password " {...field} className="text-white font-mono font-bold" />
+                                        <Input disabled={isLoading} type="password"  placeholder="password " {...field} className="text-white font-mono font-bold" />
                                     </FormControl>
 
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <Button className="bg-green-900 text-white hover:text-black" type="submit">Signup</Button>
+                        <Button loading={isLoading} className="bg-green-900 text-white hover:text-black" type="submit">Signup</Button>
                     </form>
                 </Form>
                 <small className="text-white text-xl font-mono font-thin">Already have an account? <Link className="text-blue-500" to='/login'>Login</Link></small>
