@@ -28,7 +28,7 @@ const formSchema = z.object({
 })
 
 const Signup = () => {
-    const [signup,{isLoading}] = useSignupMutation();
+    const [signup, { isLoading }] = useSignupMutation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -42,23 +42,23 @@ const Signup = () => {
 
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-            try{
-                const res = await signup(values).unwrap();
-                console.log(res);
-                dispatch(updateCurrentUser(res));
-                // dispatch(updateIsLoggedIn(true));
-                navigate('/login')
-            }
-            catch(error){
-                console.log("Signup CLient Side",error)
-                handleError(error);
-            }
+        try {
+            const res = await signup(values).unwrap();
+            console.log(res);
+            dispatch(updateCurrentUser(res));
+            // dispatch(updateIsLoggedIn(true));
+            navigate('/login')
+        }
+        catch (error) {
+            console.log("Signup CLient Side", error)
+            handleError(error);
+        }
 
         console.log(values)
     }
     return (
-        <div className="__login grid-bg w-full h-[calc(100dvh-60px)] text-black flex justify-center flex-col items-center gap-3">
-            <div className="form-container backdrop-blur-[10px] border-[1px] border-neutral-700 rounded-3xl py-8 px-8 flex flex-col gap-3">
+        <div className="__login grid-bg w-full h-[calc(100dvh-60px)] text-black flex justify-center flex-col items-center gap-3 mt-4">
+            <div className="form-container backdrop-blur-[10px]  border-neutral-700 rounded-3xl py-8 px-8 flex flex-col gap-3">
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12 text-center">
@@ -104,7 +104,7 @@ const Signup = () => {
                                 <FormItem>
                                     <FormLabel className="text-white font-mono font-bold text-xl">UserPassword</FormLabel>
                                     <FormControl >
-                                        <Input disabled={isLoading} type="password"  placeholder="password " {...field} className="text-white font-mono font-bold" />
+                                        <Input disabled={isLoading} type="password" placeholder="password " {...field} className="text-white font-mono font-bold" />
                                     </FormControl>
 
                                     <FormMessage />

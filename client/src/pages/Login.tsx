@@ -55,8 +55,8 @@ const Login = () => {
         }
     }
     return (
-        <div className="__login grid-bg w-full h-[calc(100dvh-60px)] text-black flex justify-center flex-col items-center gap-3">
-            <div className="form-container backdrop-blur-[10px] border-[1px] border-neutral-700 rounded-3xl py-8 px-8 flex flex-col gap-3">
+        <div className="__login grid-bg w-full h-[calc(100dvh-60px)] text-black flex justify-center flex-col items-center gap-3 mt-20">
+            <div className="form-container backdrop-blur-[10px]  border-neutral-700 rounded-3xl py-8 px-8 flex flex-col gap-3">
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12 text-center">
@@ -88,8 +88,8 @@ const Login = () => {
                                 <FormItem>
                                     <FormLabel className="text-white font-mono font-bold text-xl">UserPassword</FormLabel>
                                     <FormControl >
-                                        <Input disabled={isLoading} 
-                                        type="password" required   placeholder="password " {...field} className="text-white font-mono font-bold" />
+                                        <Input disabled={isLoading}
+                                            type="password" required placeholder="password " {...field} className="text-white font-mono font-bold" />
                                     </FormControl>
 
                                     <FormMessage />

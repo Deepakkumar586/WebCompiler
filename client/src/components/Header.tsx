@@ -13,7 +13,7 @@ const Header = () => {
     const [logout, { isLoading }] = useLogoutMutation();
     const dispatch = useDispatch();
     const isLoggedIn = useSelector((state: RootState) => state.appSlice.isLoggedIn)
-    const currentUser  = useSelector((state:RootState)=>state.appSlice.currentUser);
+    const currentUser = useSelector((state: RootState) => state.appSlice.currentUser);
 
     async function handleLogout() {
         try {
@@ -35,17 +35,28 @@ const Header = () => {
             </h2></Link>
             <ul className="flex gap-2">
                 <li>
-                    <Link to="/compiler"><Button variant="ghost">Compiler</Button></Link>
+                    <Link to="/compiler"><Button variant="link">Compiler</Button></Link>
+                </li>
+
+                <li>
+                    <Link to='/all-codes'>
+                        <Button variant="link">All  Codes</Button>
+                    </Link>
                 </li>
                 {
                     isLoggedIn ? (<>
+                        <li>
+                            <Link to='/my-codes'>
+                                <Button variant="default">My Codes</Button>
+                            </Link>
+                        </li>
                         <li>
                             <Button onClick={handleLogout} loading={isLoading} variant="destructive">Logout</Button>
                         </li>
                         <li>
                             <Avatar>
                                 <AvatarImage src={currentUser.picture} />
-                                <AvatarFallback className="capitalize">{currentUser.username?.slice(0,2)}</AvatarFallback>
+                                <AvatarFallback className="capitalize">{currentUser.username?.slice(0, 2)}</AvatarFallback>
                             </Avatar>
                         </li>
                     </>) : (<>

@@ -1,11 +1,11 @@
 
-import { Code2, Copy, Download, Loader, Share2Icon } from 'lucide-react'
+import { Code, Copy, Download, PencilLine, Save, Share2 } from 'lucide-react'
 import { Button } from './ui/button'
 
 import {
     Select,
     SelectContent,
-    SelectGroup,
+
     SelectItem,
 
     SelectTrigger,
@@ -19,121 +19,229 @@ import { handleError } from '@/utils/handleError'
 // import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { useSaveCodeMutation } from '@/redux/slices/api'
+import { Input } from './ui/input'
 
 
 
 
 const CodeHelper = () => {
+    // const isOwner = useSelector(
+    //     (state: RootState) => state.compilerSlice.isOwner
+    //   );
     const [shareBtn, setShareBtn] = useState<boolean>(false);
-    // const [saveLoading, setSaveLoading] = useState<boolean>(false);
-    const dispatch = useDispatch();
+    const [postTitle, setPostTitle] = useState<string>("My Code");
+
     const navigate = useNavigate();
-    const currentLanguage = useSelector((state: RootState) => state.compilerSlice.currentLanguage);
-    const fullCode = useSelector((state: RootState) => state.compilerSlice.fullCode);
-
-
-    // come data from RTK QUERY
+    const fullCode = useSelector(
+        (state: RootState) => state.compilerSlice.fullCode
+    );
     const [saveCode, { isLoading }] = useSaveCodeMutation();
+    //   const [editCode, { isLoading: codeEditLoading }] = useEditCodeMutation();
 
-    /* Handle Save Code */
-    const handleSaveCode = async () => {
+    const handleDownloadCode = () => {
+        if (
+            fullCode.html === "" &&
+            fullCode.css === "" &&
+            fullCode.javascript === ""
+        ) {
+            toast("Error: Code is Empty");
+        } else {
+            const htmlCode = new Blob([fullCode.html], { type: "text/html" });
+            const cssCode = new Blob([fullCode.css], { type: "text/css" });
+            const javascriptCode = new Blob([fullCode.javascript], {
+                type: "text/javascript",
+            });
 
-        try {
-            const response = await saveCode(fullCode).unwrap();
-            console.log(response);
+            const htmlLink = document.createElement("a");
+            const cssLink = document.createElement("a");
+            const javascriptLink = document.createElement("a");
 
-            // console.log("SAVE ON CLIENT ", response.data);
-            navigate(`/compiler/${response.url}`, { replace: true })
+            htmlLink.href = URL.createObjectURL(htmlCode);
+            htmlLink.download = "index.html";
+            document.body.appendChild(htmlLink);
+
+            cssLink.href = URL.createObjectURL(cssCode);
+            cssLink.download = "style.css";
+            document.body.appendChild(cssLink);
+
+            javascriptLink.href = URL.createObjectURL(javascriptCode);
+            javascriptLink.download = "script.js";
+            document.body.appendChild(javascriptLink);
+
+            if (fullCode.html !== "") {
+                htmlLink.click();
+            }
+            if (fullCode.css !== "") {
+                cssLink.click();
+            }
+            if (fullCode.javascript !== "") {
+                javascriptLink.click();
+            }
+
+            document.body.removeChild(htmlLink);
+            document.body.removeChild(cssLink);
+            document.body.removeChild(javascriptLink);
+
+            toast("Code Downloaded Successfully!");
         }
-        catch (err) {
-            console.log("ERROR in save code", err);
-            handleError(err);
-        }
-
-    }
 
 
-    // Share code
+    };
+
     const { urlId } = useParams();
     useEffect(() => {
         if (urlId) {
             setShareBtn(true);
-        }
-        else {
+        } else {
             setShareBtn(false);
         }
-    }, [urlId])
+    }, [urlId]);
 
+    const handleSaveCode = async () => {
+        const body = { fullCode: fullCode, title: postTitle };
+        try {
+          const response = await saveCode(body).unwrap();
+          navigate(`/compiler/${response.url}`, { replace: true });
+        } catch (error) {
+          handleError(error);
+        }
+    };
 
+    const handleEditCode = async () => {
+        try {
+            if (urlId) {
+                // await editCode({ fullCode, id: urlId }).unwrap();
+                toast("Code Updated Successully!");
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    };
 
+    const dispatch = useDispatch();
+    const currentLanguage = useSelector(
+        (state: RootState) => state.compilerSlice.currentLanguage
+    );
     return (
-        <div className='helper_header h-[50px] bg-black text-teal-50 p-2 flex justify-between items-center '>
-            <div className='btn-container flex'>
-                <Button
-                    onClick={handleSaveCode}
-                    variant="green"
-                    disabled={isLoading} className='text-sm  font-medium gap-1'>
-                    {isLoading ? (<><Loader className='animate-spin' />Saving</>) : (<><Download size={16} />Save</>)}
+        <div className="__helper_header h-[50px] bg-black text-white p-2 flex justify-between items-center">
+            <div className="__btn_container flex gap-1">
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="default" size="icon" loading={isLoading}>
+                            <Save size={16} />
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle className="flex gap-1 justify-center items-center">
+                                <Code />
+                                Save your Code!
+                            </DialogTitle>
+                            <div className="__url flex justify-center items-center gap-1">
+                                <Input
+                                    className="bg-slate-700 focus-visible:ring-0"
+                                    placeholder="Type your Post title"
+                                    value={postTitle}
+                                    onChange={(e) => setPostTitle(e.target.value)}
+                                />
+                                <Button
+                                    variant="default"
+                                    className="h-full"
+                                    onClick={handleSaveCode}
+                                    // loading={loading}
+                                >
+                                    Save
+                                </Button>
+                            </div>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
+                <Button onClick={handleDownloadCode} size="icon" variant="default">
+                    <Download size={16} />
                 </Button>
 
-                {
-                    shareBtn && (
+                {shareBtn && (
+                    <>
+                        {
+                            //   isOwner &&
+                            (
+                                <Button
+                                    //   loading={codeEditLoading}
+                                    onClick={handleEditCode}
+                                    variant="default"
+                                >
+                                    <PencilLine size={16} />
+                                    Edit
+                                </Button>
+                            )}
                         <Dialog>
-                            <DialogTrigger className='inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-lg text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 mt-1 h-9 px-4 py-2 text-sm font-medium gap-1'>
-
-                                <Share2Icon size={16} />Share</DialogTrigger>
+                            <DialogTrigger asChild>
+                                <Button size="icon" variant="default">
+                                    <Share2 size={16} />
+                                </Button>
+                            </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle className='flex gap-2 justify-center items-center'>
-                                        <Code2 />
-                                        Share your Code!</DialogTitle>
-                                    <DialogDescription className='flex flex-col gap-2'>
-
-                                        <div className="__url flex gap-2">
-                                            <input type='text' disabled className='w-full px-2 py-2 rounded bg-slate-600 text-white select-none' value={window.location.href} />
-                                            <Button
-                                                onClick={() => {
-                                                    window.navigator.clipboard.writeText(window.location.href);
-                                                    toast("URL Copied to uour Clipboard")
-                                                }}
-                                                variant="outline"><Copy size={18} /></Button>
-                                        </div>
-
-                                        <p className='text-center'>Share This URL with your friends to collaborate.</p>
-
-                                    </DialogDescription>
+                                    <DialogTitle className="flex gap-1 justify-center items-center">
+                                        <Code />
+                                        Share your Code!
+                                    </DialogTitle>
+                                    <div className="__url flex justify-center items-center gap-1">
+                                        <input
+                                            type="text"
+                                            disabled
+                                            className="w-full p-2 rounded bg-slate-800 text-slate-400 select-none"
+                                            value={window.location.href}
+                                        />
+                                        <Button
+                                            variant="outline"
+                                            className="h-full"
+                                            onClick={() => {
+                                                window.navigator.clipboard.writeText(
+                                                    window.location.href
+                                                );
+                                                toast("URL Copied to your clipboard!");
+                                            }}
+                                        >
+                                            <Copy size={14} />
+                                        </Button>
+                                    </div>
+                                    <p className="text-center text-slate-400 text-xs">
+                                        Share this URL with your friends to collaborate.
+                                    </p>
                                 </DialogHeader>
                             </DialogContent>
                         </Dialog>
-                    )
-                }
-
-
+                    </>
+                )}
             </div>
-            <div className='tab-switcher flex justify-center items-center gap-2'>
-                <p className='text-sm'> Language:</p>
-                <Select defaultValue={currentLanguage}
-
-                    onValueChange={(value) => dispatch(updateCurrentLanguage(value as CompilerSliceInitialStateType["currentLanguage"]))}>
-
-                    <SelectTrigger className="w-[100px] bg-gray-800 outline-none focus:ring-0">
+            <div className="__tab_switcher flex justify-center items-center gap-1">
+                <small>Current Language: </small>
+                <Select
+                    defaultValue={currentLanguage}
+                    onValueChange={(value) =>
+                        dispatch(
+                            updateCurrentLanguage(
+                                value as CompilerSliceInitialStateType["currentLanguage"]
+                            )
+                        )
+                    }
+                >
+                    <SelectTrigger className="w-[120px] bg-gray-800 outline-none focus:ring-0">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="html">HTML</SelectItem>
-                            <SelectItem value="css">CSS</SelectItem>
-                            <SelectItem value="javascript">JavaScript</SelectItem>
-                        </SelectGroup>
+                        <SelectItem value="html">HTML</SelectItem>
+                        <SelectItem value="css">CSS</SelectItem>
+                        <SelectItem value="javascript">JavaScript</SelectItem>
                     </SelectContent>
                 </Select>
-
             </div>
         </div>
-    )
+    );
 }
 
 export default CodeHelper
