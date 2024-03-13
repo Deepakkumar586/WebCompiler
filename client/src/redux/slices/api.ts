@@ -10,13 +10,13 @@ export const api = createApi({
     }),
 
     // this is global tags in RTK Query State
-    tagTypes: ["myCodes"],
+    tagTypes: ["myCodes", "allCodes"],
 
     endpoints: (builder) => ({
 
 
         // for save code
-        saveCode: builder.mutation<{ url: string, status: string },codeType>({
+        saveCode: builder.mutation<{ url: string, status: string }, codeType>({
             query: (fullCode) => {
                 return {
 
@@ -29,15 +29,15 @@ export const api = createApi({
 
 
             // rwhen code save then all cache reset  ---->> page refresh ki neerd nhi padegi 
-            invalidatesTags: ["myCodes"],
+            invalidatesTags: ["myCodes", "allCodes"],
         }),
 
         // for Load Code
-        loadCode: builder.mutation<{ fullCode: CompilerSliceInitialStateType["fullCode"] }, { urlId: string }>({
-            query: ({ urlId }) => ({
+        loadCode: builder.mutation<{ fullCode: CompilerSliceInitialStateType["fullCode"], isOwner: boolean }, { urlId: string }>({
+            query: (body) => ({
                 url: "/compiler/load",
                 method: "POST",
-                body: urlId,
+                body: body,
             })
         }),
 
@@ -77,21 +77,43 @@ export const api = createApi({
             providesTags: ["myCodes"],
         }),
 
-        deleteCode:builder.mutation<void,string>({
+        deleteCode: builder.mutation<void, string>({
             query: (_id) => ({
                 url: `/compiler/delete/${_id}`,
                 method: "DELETE",
                 body: _id,
             }),
+            invalidatesTags: ["myCodes", "allCodes"],
+        }),
+
+        // edit post
+        editPost: builder.mutation<void, { fullCode: CompilerSliceInitialStateType["fullCode"]; id: string }>({
+            query: ({ fullCode, id }) => ({
+                url: `/compiler/edit/${id}`,
+                method: "PUT",
+                body: fullCode,
+            }),
             invalidatesTags: ["myCodes"],
-        })
+        }),
+
+
+        // get all codes
+        getAllCodes: builder.query<Array<{ _id: string, title: string, ownerName: string }>, void>({
+            query: () => ({
+                url: "/compiler/all-codes",
+                cache: "no-store"
+            }),
+            providesTags: ["allCodes"],
+
+
+        }),
     }),
 
 
 
 })
 
-export const { useSaveCodeMutation, useLoadCodeMutation, useLoginMutation, useLogoutMutation, useGetUserDetailsQuery, useSignupMutation, useGetMyCodesQuery,useDeleteCodeMutation} = api
+export const { useSaveCodeMutation, useLoadCodeMutation, useLoginMutation, useLogoutMutation, useGetUserDetailsQuery, useSignupMutation, useGetMyCodesQuery, useDeleteCodeMutation, useEditPostMutation, useGetAllCodesQuery } = api
 
 // mutation wale array destructuring karte hai
 // query wale object destructuring

@@ -7,6 +7,7 @@ import { handleError } from "@/utils/handleError"
 import { useLogoutMutation } from "@/redux/slices/api"
 import { updateCurrentUser, updateIsLoggedIn } from "@/redux/slices/appSlice"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { updateisOwner } from "@/redux/slices/compilerSlice"
 
 
 const Header = () => {
@@ -21,6 +22,7 @@ const Header = () => {
             await logout().unwrap();
             dispatch(updateIsLoggedIn(false));
             dispatch(updateCurrentUser({}));
+            dispatch(updateisOwner(false));
 
         }
         catch (err) {

@@ -1,5 +1,5 @@
 
-import { Code, Copy, Download, PencilLine, Save, Share2 } from 'lucide-react'
+import { Code, Copy, Download, FilePenLine, PencilLine, Save, Share2 } from 'lucide-react'
 import { Button } from './ui/button'
 
 import {
@@ -21,16 +21,16 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { toast } from 'sonner'
-import { useSaveCodeMutation } from '@/redux/slices/api'
+import { useEditPostMutation, useSaveCodeMutation } from '@/redux/slices/api'
 import { Input } from './ui/input'
 
 
 
 
 const CodeHelper = () => {
-    // const isOwner = useSelector(
-    //     (state: RootState) => state.compilerSlice.isOwner
-    //   );
+    const isOwner = useSelector(
+        (state: RootState) => state.compilerSlice.isOwner
+    );
     const [shareBtn, setShareBtn] = useState<boolean>(false);
     const [postTitle, setPostTitle] = useState<string>("My Code");
 
@@ -39,7 +39,7 @@ const CodeHelper = () => {
         (state: RootState) => state.compilerSlice.fullCode
     );
     const [saveCode, { isLoading }] = useSaveCodeMutation();
-    //   const [editCode, { isLoading: codeEditLoading }] = useEditCodeMutation();
+    const [editCode, { isLoading: codeEditLoading }] = useEditPostMutation();
 
     const handleDownloadCode = () => {
         if (
@@ -103,19 +103,24 @@ const CodeHelper = () => {
     const handleSaveCode = async () => {
         const body = { fullCode: fullCode, title: postTitle };
         try {
-          const response = await saveCode(body).unwrap();
-          navigate(`/compiler/${response.url}`, { replace: true });
+            const response = await saveCode(body).unwrap();
+            navigate(`/compiler/${response.url}`, { replace: true });
         } catch (error) {
-          handleError(error);
+            handleError(error);
         }
     };
 
     const handleEditCode = async () => {
         try {
             if (urlId) {
-                // await editCode({ fullCode, id: urlId }).unwrap();
-                toast("Code Updated Successully!");
+                const response = await editCode({ fullCode, id: urlId }).unwrap();
+                console.log("Edit Code Success", response);
+
+                toast("Code updated successfully")
+
             }
+
+
         } catch (error) {
             handleError(error);
         }
@@ -151,7 +156,7 @@ const CodeHelper = () => {
                                     variant="default"
                                     className="h-full"
                                     onClick={handleSaveCode}
-                                    // loading={loading}
+                                // loading={loading}
                                 >
                                     Save
                                 </Button>
@@ -163,13 +168,16 @@ const CodeHelper = () => {
                     <Download size={16} />
                 </Button>
 
+
+
+
                 {shareBtn && (
                     <>
                         {
-                            //   isOwner &&
+                            isOwner &&
                             (
                                 <Button
-                                    //   loading={codeEditLoading}
+                                    loading={codeEditLoading}
                                     onClick={handleEditCode}
                                     variant="default"
                                 >

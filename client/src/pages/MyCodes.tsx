@@ -10,7 +10,7 @@ const MyCodes = () => {
             <div className="p-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-3">
                 {
                     myCodes?.map((item, id) => {
-                        return <CodeItem key={id} data={item} />
+                        return <CodeItem deleteBtn={true} key={id} data={item} />
                     })
                 }
 

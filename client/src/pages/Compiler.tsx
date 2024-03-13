@@ -7,8 +7,9 @@ import { useParams } from "react-router-dom"
 import axios from "axios"
 import { handleError } from "@/utils/handleError"
 import { useDispatch } from "react-redux"
-import { updateFullCode } from "@/redux/slices/compilerSlice"
+import { updateFullCode, updateisOwner } from "@/redux/slices/compilerSlice"
 import { toast } from "sonner"
+import { useLoadCodeMutation } from "@/redux/slices/api"
 // import { RootState } from "@/redux/store"
 // import { useSelector } from "react-redux"
 
@@ -17,17 +18,19 @@ export const Compiler = () => {
   // const html = useSelector((state:RootState)=>state.compilerSlice.html);
   const { urlId } = useParams();
   console.log("URL ID", urlId);
+  const [loadExistingCode, { isLoading }] = useLoadCodeMutation();
 
 
   const dispatch = useDispatch();
   const loadCode = async () => {
     try {
-      const res = await axios.post("http://localhost:2000/compiler/load", {
-        urlId: urlId
-      });
-      console.log("LOAD CODE ", res.data);
+      if (urlId) {
+        const res = await loadExistingCode({ urlId }).unwrap();
+        dispatch(updateFullCode(res.fullCode))
+        dispatch(updateisOwner(res.isOwner));
+      }
 
-      dispatch(updateFullCode(res.data.fullCode))
+
     }
     catch (err) {
       console.log("CLIENT LOAD ERROR", err)
